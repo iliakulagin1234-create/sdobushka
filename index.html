@@ -1,0 +1,259 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#FAF3E8">
+<title>Сдобушка, пекарня в&nbsp;Оренбурге. Хлеб, пироги и&nbsp;пельмени до&nbsp;22:00</title>
+<meta name="description" content="Свой хлеб на закваске, пироги на заказ, пельмени и манты ручной лепки. Две пекарни: Фронтовиков, 6/1 и Берёзка, 19/1, каждый день 9:00–22:00.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geologica:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://images.unsplash.com">
+<style>
+  /* Macherie (Анастасия Ермолаева, fonts.uprock.ru, «для коммерции»): заголовок, логотип, счётчик. Файл лежит в fonts/ */
+  @font-face{font-family:Macherie;src:url(fonts/Macherie.otf) format("opentype");font-weight:400;font-display:swap}
+  :root{
+    --chocolate:#3F1F0A; --cinnamon:#8E4A2C; --glaze:#6E2E0E; --caramel:#D8A06A;
+    --milk:#FAF3E8; --cream:#F2E5D3; --flour:#E5D3BC; --sand:#C9AA8E; --cocoa:#2A160A;
+    --muted:#7A5E48;
+    --ease:cubic-bezier(.4,0,.2,1);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{min-height:100svh;background:var(--milk);color:var(--cocoa);font:400 16px/1.5 Geologica,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit}
+
+  /* Одна большая скруглённая панель, как на референсе: фото — фон, текст лежит прямо на нём */
+  .hero{position:relative;isolation:isolate;overflow:hidden;
+    width:min(1440px, calc(100% - 32px));margin:16px auto;border-radius:32px;background:var(--chocolate);color:var(--cream);
+    height:calc(100svh - 32px);min-height:560px;display:flex;flex-direction:column}
+
+  /* Фон: фото перетекают одно в другое */
+  .slides{position:absolute;inset:0;z-index:-2;margin:0}
+  .slide{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:60% 55%;
+    opacity:0;filter:blur(14px);transform:scale(1.14);
+    transition:opacity 1.6s var(--ease), filter 1.6s var(--ease), transform 7s cubic-bezier(.25,.1,.25,1)}
+  .slide.is-active{opacity:1;filter:blur(0);transform:scale(1.03);z-index:1}
+  .slide.is-leaving{opacity:0;filter:blur(10px);transform:scale(1);z-index:0;
+    transition:opacity 1.6s var(--ease), filter 1.6s var(--ease), transform 1.6s ease-out}
+  /* затемнение слева, чтобы текст читался, справа фото остаётся живым */
+  .hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+    background:
+      radial-gradient(38% 42% at 94% 86%, rgba(42,22,10,.62), rgba(42,22,10,0) 100%),
+      linear-gradient(90deg, rgba(42,22,10,.92) 0%, rgba(42,22,10,.78) 34%, rgba(42,22,10,.25) 62%, rgba(42,22,10,.1) 100%),
+      linear-gradient(180deg, rgba(42,22,10,.55) 0%, rgba(42,22,10,0) 18%, rgba(42,22,10,0) 70%, rgba(42,22,10,.6) 100%)}
+
+  /* Шапка внутри панели */
+  .header{display:flex;align-items:center;justify-content:space-between;gap:24px;padding:clamp(16px,2.6vh,26px) clamp(24px,3.6vw,52px)}
+  .logo{display:flex;align-items:center;gap:10px;font:400 30px/1 Macherie,serif;letter-spacing:.01em;color:var(--cream)}
+  .logo svg{width:28px;height:28px;color:var(--caramel)}
+  .nav{display:flex;gap:clamp(18px,2.2vw,34px);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--flour)}
+  .nav a{transition:color .15s}
+  .nav a:hover{color:var(--caramel)}
+  .tools{display:flex;align-items:center;gap:10px}
+  .pill{display:inline-flex;align-items:center;gap:8px;height:44px;padding:0 20px;border-radius:999px;font-size:14px;font-weight:500;white-space:nowrap;transition:background-color .18s, color .18s, border-color .18s}
+  .pill svg{width:18px;height:18px}
+  .pill--line,.pill--solid{border:1.5px solid rgba(242,229,211,.55);color:var(--cream);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+  .pill--line:hover,.pill--solid:hover{border-color:var(--cream);background:rgba(242,229,211,.1)}
+  .burger{display:none;place-items:center;width:44px;height:44px;border:1.5px solid rgba(242,229,211,.55);border-radius:50%;background:none;color:var(--cream);padding:0}
+  .burger svg{width:20px;height:20px}
+
+  /* Контент */
+  .body{flex:1;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);align-items:end;gap:32px;
+    min-height:0;padding:clamp(8px,2vh,32px) clamp(24px,3.6vw,52px) clamp(36px,5vh,52px)}
+  /* заголовок по центру, кнопки прижаты к низу — по центру блока «01 / 04 · подпись · стрелки» справа */
+  .copy{align-self:stretch;display:flex;flex-direction:column;max-width:640px;margin-bottom:52.5px}
+  .copy h1{margin-top:auto}
+  .copy .actions{margin-top:auto}
+  h1{margin:0;font:400 clamp(40px,min(5.6vw,8.4vh),86px)/1.02 Macherie,serif;color:var(--milk);text-wrap:balance}
+  .lead{margin:clamp(14px,2.4vh,24px) 0 0;font-size:18px;line-height:1.55;color:var(--flour);max-width:36ch}
+
+  .actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px 20px;margin-top:clamp(24px,4.4vh,44px)}
+  .btn{display:inline-flex;align-items:center;justify-content:center;height:56px;padding:0 32px;border-radius:999px;
+    font:700 14px/1 Geologica,sans-serif;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;
+    transition:background-color .18s, color .18s, border-color .18s, transform .1s}
+  .btn:active{transform:scale(.98)}
+  /* главная кнопка — стекло с коричневой тонировкой: фон виден сквозь корицу, по кромке блик */
+  .btn--primary{position:relative;isolation:isolate;color:var(--milk);
+    background:linear-gradient(180deg, rgba(142,74,44,.16) 0%, rgba(142,74,44,.24) 100%);text-shadow:0 1px 2px rgba(0,0,0,.35);
+    -webkit-backdrop-filter:blur(3px) saturate(125%);backdrop-filter:blur(3px) saturate(125%);
+    box-shadow:inset 0 0 0 1px rgba(216,160,106,.28), 0 10px 24px -12px rgba(0,0,0,.55)}
+  .btn--primary::after{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;
+    background:linear-gradient(135deg, rgba(255,236,214,.85) 0%, rgba(255,236,214,.15) 30%, rgba(255,236,214,0) 55%, rgba(255,236,214,.15) 80%, rgba(255,236,214,.6) 100%);
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0)}
+  .btn--primary::before{content:"";position:absolute;inset:0;z-index:-1;border-radius:inherit;pointer-events:none;
+    background:linear-gradient(180deg, rgba(255,236,214,.2) 0%, rgba(255,236,214,0) 50%)}
+  .btn--primary:hover{background:linear-gradient(180deg, rgba(142,74,44,.3) 0%, rgba(142,74,44,.38) 100%)}
+  .btn--ghost{border:1.5px solid rgba(242,229,211,.7);color:var(--cream)}
+  .btn--ghost:hover{background:var(--cream);color:var(--chocolate)}
+  .call{font-size:14px;color:var(--sand)}
+  .call b{display:block;font-size:17px;color:var(--cream);font-weight:700}
+  .call:hover b{color:var(--caramel)}
+
+
+  /* Правая колонка: подпись к фото */
+  .side{display:flex;flex-direction:column;align-items:flex-end;justify-content:flex-end;gap:14px;height:100%}
+  /* подпись к текущему фото: номер, прогресс, что на кадре, стрелки */
+  .caption{width:min(340px,100%);color:var(--cream);text-align:right;text-shadow:0 2px 10px rgba(0,0,0,.45)}
+  .caption .num{margin:0;font:400 44px/1 Macherie,serif;color:var(--milk)}
+  .caption .num span:last-child{color:rgba(242,229,211,.45)}
+  .caption .bar{height:2px;margin:6px 0 23px;background:rgba(242,229,211,.25)}
+  .caption .bar i{display:block;height:100%;width:25%;background:var(--cream);transition:width .6s var(--ease)}
+  .caption b{display:block;margin-bottom:14px;font-size:16px;font-weight:700}
+  .caption .txt{transition:opacity .4s var(--ease)}
+  .caption .txt.is-out{opacity:0}
+  .arrows{display:flex;gap:8px;justify-content:flex-end}
+  .arrows button{display:grid;place-items:center;width:48px;height:48px;padding:0;border-radius:50%;border:1.5px solid rgba(242,229,211,.6);background:none;color:var(--cream);cursor:pointer;transition:background-color .18s, color .18s, border-color .18s}
+  .arrows button:hover{background:var(--cream);border-color:var(--cream);color:var(--chocolate)}
+  .arrows svg{width:20px;height:20px}
+
+  a:focus-visible,button:focus-visible{outline:2px solid var(--caramel);outline-offset:3px}
+  @media (prefers-reduced-motion:reduce){.slide,.slide.is-leaving{transition:opacity .6s;filter:none;transform:none}}
+
+  @media (max-width:1180px){
+    .nav{display:none}
+    .burger{display:grid}
+  }
+  @media (max-width:960px){
+    .hero{height:auto;min-height:calc(100svh - 32px)}
+    .body{grid-template-columns:minmax(0,1fr);align-items:start}
+    .side{align-items:flex-start}
+    .copy{display:block;margin-bottom:0}
+    .copy .actions{margin-top:clamp(24px,4.4vh,44px)}
+    .caption{width:100%;text-align:left}
+    .arrows{justify-content:flex-start}
+    .hero::before{background:linear-gradient(180deg, rgba(42,22,10,.6) 0%, rgba(42,22,10,.82) 40%, rgba(42,22,10,.92) 100%)}
+  }
+  @media (max-width:720px){
+    /* на телефоне экран во всю высоту: сверху фото, текст и кнопки прижаты к низу */
+    /* отступы от чёлки / Dynamic Island и нижней полоски iPhone */
+    .hero{width:calc(100% - 20px - env(safe-area-inset-left) - env(safe-area-inset-right));border-radius:24px;
+      margin:max(10px, env(safe-area-inset-top)) auto max(10px, env(safe-area-inset-bottom));
+      min-height:calc(100svh - max(10px, env(safe-area-inset-top)) - max(10px, env(safe-area-inset-bottom)))}
+    .hero::before{background:linear-gradient(180deg, rgba(42,22,10,.35) 0%, rgba(42,22,10,.2) 22%, rgba(42,22,10,.82) 50%, rgba(42,22,10,.94) 100%)}
+    /* шапка на телефоне: корзина слева, логотип по центру, меню справа */
+    .header{display:grid;grid-template-columns:44px 1fr 44px;gap:8px;padding:16px 16px}
+    .tools{display:contents}
+    .logo{grid-area:1/2;justify-self:center}
+    .tools .pill--solid{grid-area:1/1;width:44px;padding:0;justify-content:center}
+    .burger{grid-area:1/3}
+    .logo{font-size:26px;gap:8px}
+    .logo svg{width:22px;height:22px}
+    .tools .pill--line{display:none}
+    .pill--solid{height:44px}
+    .pill--solid .label{display:none}
+    .body{padding:28px 16px 24px;gap:22px;align-content:end}
+    h1{font-size:clamp(38px,11vw,52px)}
+    .lead{font-size:16px}
+    .actions .btn{flex:1 1 100%}
+    /* подпись к фото компактная: номер и стрелки в одну строку */
+    .caption{display:grid;grid-template-columns:1fr auto;align-items:center;column-gap:12px}
+    .caption .num{grid-area:1/1;font-size:30px}
+    .caption .arrows{grid-area:1/2}
+    .caption .arrows button{width:38px;height:38px}
+    .caption .arrows svg{width:16px;height:16px}
+    .caption .bar{grid-area:2/1/3/3;margin:8px 0 10px}
+    .caption .txt{grid-area:3/1/4/3}
+    .caption b{margin:0;font-size:15px}
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <!-- ЧЕРНОВИК: стоковые фото Unsplash (лицензия Unsplash), заменить на съёмку пекарни -->
+  <!-- Подписи к фото (data-title) — к стоку; после съёмки взять из «Тексты лендинга», раздел «Подписи к полосе фото» -->
+  <figure class="slides" aria-label="Фото выпечки">
+    <img class="slide is-active" data-title="Слоёные булочки" src="https://images.unsplash.com/photo-1614205569927-1f104e088eee?w=1800&amp;q=80&amp;auto=format&amp;fit=crop" srcset="https://images.unsplash.com/photo-1614205569927-1f104e088eee?w=900&amp;q=75&amp;auto=format&amp;fit=crop 900w, https://images.unsplash.com/photo-1614205569927-1f104e088eee?w=1800&amp;q=80&amp;auto=format&amp;fit=crop 1800w" sizes="100vw" alt="Слоёные булочки на тёмном столе" fetchpriority="high">
+    <img class="slide" data-title="Сдобные булочки" src="https://images.unsplash.com/photo-1702595152389-e13df23c3ae9?w=1800&amp;q=80&amp;auto=format&amp;fit=crop" srcset="https://images.unsplash.com/photo-1702595152389-e13df23c3ae9?w=900&amp;q=75&amp;auto=format&amp;fit=crop 900w, https://images.unsplash.com/photo-1702595152389-e13df23c3ae9?w=1800&amp;q=80&amp;auto=format&amp;fit=crop 1800w" sizes="100vw" alt="Сдобные булочки на витрине" loading="lazy">
+    <img class="slide" data-title="Пироги и&nbsp;хлеб" src="https://images.unsplash.com/photo-1586026779826-a5205f0ff4e0?w=1800&amp;q=80&amp;auto=format&amp;fit=crop" srcset="https://images.unsplash.com/photo-1586026779826-a5205f0ff4e0?w=900&amp;q=75&amp;auto=format&amp;fit=crop 900w, https://images.unsplash.com/photo-1586026779826-a5205f0ff4e0?w=1800&amp;q=80&amp;auto=format&amp;fit=crop 1800w" sizes="100vw" alt="Пироги и батон на льняном полотенце" loading="lazy">
+    <img class="slide" data-title="Хлеб и&nbsp;выпечка" src="https://images.unsplash.com/photo-1761853321068-1477c9dfbbdb?w=1800&amp;q=80&amp;auto=format&amp;fit=crop" srcset="https://images.unsplash.com/photo-1761853321068-1477c9dfbbdb?w=900&amp;q=75&amp;auto=format&amp;fit=crop 900w, https://images.unsplash.com/photo-1761853321068-1477c9dfbbdb?w=1800&amp;q=80&amp;auto=format&amp;fit=crop 1800w" sizes="100vw" alt="Витрина пекарни с хлебом и выпечкой" loading="lazy">
+  </figure>
+
+  <header class="header">
+    <a class="logo" href="#" aria-label="Сдобушка, на главную">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M3 15c0-4 4-8 9-8s9 4 9 8"/><path d="M3 15c3 1.5 15 1.5 18 0"/><path d="M9 8.2c.6 2 .6 4.6 0 7M15 8.2c-.6 2-.6 4.6 0 7M12 7v8.6"/></svg>
+      Сдобушка
+    </a>
+    <nav class="nav" aria-label="Разделы">
+      <a href="#menu">Меню</a><a href="#order">На&nbsp;заказ</a><a href="#delivery">Доставка</a><a href="#reviews">Отзывы</a><a href="#addresses">Адреса</a>
+    </nav>
+    <div class="tools">
+      <a class="pill pill--line" href="tel:+79867815511">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6.6 3.5h2.6l1.5 4-2 1.3a11 11 0 0 0 6.5 6.5l1.3-2 4 1.5v2.6a2 2 0 0 1-2.2 2A17 17 0 0 1 4.6 5.7a2 2 0 0 1 2-2.2z"/></svg>
+        +7&nbsp;986&nbsp;781-55-11
+      </a>
+      <a class="pill pill--solid" href="#cart" aria-label="Корзина">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14l-1.2 11.2a1 1 0 0 1-1 .8H7.2a1 1 0 0 1-1-.8z"/><path d="M9 10V7a3 3 0 0 1 6 0v3"/></svg>
+        <span class="label">Корзина</span>
+      </a>
+      <button class="burger" type="button" aria-label="Открыть меню">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="body">
+    <div class="copy">
+      <h1>Свой хлеб и&nbsp;пироги у&nbsp;дома</h1>
+      <p class="lead">Хлеб и&nbsp;пироги печём сами, пельмени и&nbsp;манты лепим руками.</p>
+      <div class="actions">
+        <a class="btn btn--primary" href="tel:+79867815511">Заказать по&nbsp;телефону</a>
+        <a class="btn btn--ghost" href="#addresses">Как доехать</a>
+      </div>
+    </div>
+
+    <div class="side">
+      <div class="caption">
+        <p class="num"><span class="cur">01</span> <span>/ 04</span></p>
+        <div class="bar"><i></i></div>
+        <div class="txt"><b>Слоёные булочки</b></div>
+        <div class="arrows">
+          <button type="button" class="prev" aria-label="Предыдущее фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg></button>
+          <button type="button" class="next" aria-label="Следующее фото"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+
+<script>
+  (() => {
+    const slides = [...document.querySelectorAll('.slide')];
+    const cap = document.querySelector('.caption');
+    const num = cap.querySelector('.cur'), fill = cap.querySelector('.bar i'), txt = cap.querySelector('.txt');
+    const pad = (n) => String(n).padStart(2, '0');
+    cap.querySelector('.num span:last-child').textContent = '/ ' + pad(slides.length);
+    cap.querySelector('.prev').addEventListener('click', () => { go(cur - 1); restart(); });
+    cap.querySelector('.next').addEventListener('click', () => { go(cur + 1); restart(); });
+    const show = (n) => {
+      num.textContent = pad(n + 1);
+      fill.style.width = (n + 1) / slides.length * 100 + '%';
+      txt.classList.add('is-out');
+      setTimeout(() => {
+        txt.innerHTML = `<b>${slides[n].dataset.title}</b>`;
+        txt.classList.remove('is-out');
+      }, 400);
+    };
+    let cur = 0, timer;
+    const go = (n) => {
+      n = (n + slides.length) % slides.length;
+      if (n === cur) return;
+      slides.forEach(s => s.classList.remove('is-leaving'));
+      slides[cur].classList.replace('is-active', 'is-leaving');
+      slides[n].classList.add('is-active');
+      cur = n;
+      show(n);
+    };
+    const restart = () => { clearInterval(timer); timer = setInterval(() => go(cur + 1), 6000); };
+    document.addEventListener('visibilitychange', () => document.hidden ? clearInterval(timer) : restart());
+    restart();
+  })();
+</script>
+
+</body>
+</html>
